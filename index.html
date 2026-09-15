@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090b16" />
+  <meta name="description" content="NEBULA OS — experiência web interativa construída para demonstrar front-end avançado." />
+  <title>NEBULA OS · Interactive Portfolio Lab</title>
+
+  <style>
+    :root {
+      --bg: #070812;
+      --panel: rgba(14, 17, 32, .72);
+      --panel-2: rgba(20, 24, 43, .72);
+      --text: #f5f7ff;
+      --muted: #9da6c8;
+      --line: rgba(255,255,255,.09);
+      --pink: #ff65c3;
+      --cyan: #64e9ff;
+      --violet: #9b7bff;
+      --green: #72f6b2;
+      --shadow: 0 25px 80px rgba(0,0,0,.35);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255,101,195,.13), transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(100,233,255,.11), transparent 28%),
+        radial-gradient(circle at 50% 90%, rgba(155,123,255,.11), transparent 30%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .16;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    .cursor-glow {
+      position: fixed;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(100,233,255,.10), transparent 65%);
+      z-index: 0;
+      transition: left .08s linear, top .08s linear;
+    }
+
+    .nav {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1100px, calc(100% - 28px));
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 14px 12px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(8,10,20,.65);
+      backdrop-filter: blur(22px);
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      font-size: .82rem;
+    }
+
+    .brand-orb {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: conic-gradient(from 90deg, var(--cyan), var(--pink), var(--violet), var(--cyan));
+      box-shadow: 0 0 25px rgba(100,233,255,.35);
+      animation: spin 7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a, .nav-action {
+      color: var(--muted);
+      font-size: .83rem;
+      padding: 9px 12px;
+      border-radius: 999px;
+      transition: .2s;
+    }
+    .nav-links a:hover, .nav-action:hover {
+      color: var(--text);
+      background: rgba(255,255,255,.07);
+    }
+
+    .nav-action {
+      border: 1px solid var(--line);
+      background: transparent;
+    }
+
+    main { position: relative; z-index: 1; }
+    .section {
+      width: min(1100px, calc(100% - 32px));
+      margin: auto;
+      padding: 110px 0;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding-top: 130px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cyan);
+      border: 1px solid rgba(100,233,255,.18);
+      background: rgba(100,233,255,.05);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      font-weight: 700;
+    }
+
+    .pulse {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 0 rgba(114,246,178,.6);
+      animation: pulse 1.7s infinite;
+    }
+    @keyframes pulse {
+      70% { box-shadow: 0 0 0 8px rgba(114,246,178,0); }
+      100% { box-shadow: 0 0 0 0 rgba(114,246,178,0); }
+    }
+
+    h1 {
+      max-width: 950px;
+      margin: 28px auto 22px;
+      font-size: clamp(3.5rem, 10vw, 8.7rem);
+      line-height: .82;
+      letter-spacing: -.08em;
+      font-weight: 900;
+      background: linear-gradient(120deg, #fff 15%, var(--cyan) 45%, var(--pink) 72%, #fff 92%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 200% auto;
+      animation: gradient 8s linear infinite;
+    }
+    @keyframes gradient { to { background-position: 200% center; } }
+
+    .hero p {
+      max-width: 720px;
+      margin: auto;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 13px 18px;
+      color: var(--text);
+      background: rgba(255,255,255,.05);
+      transition: .25s;
+      font-weight: 700;
+    }
+    .btn:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.2); }
+    .btn.primary {
+      border: 0;
+      color: #080812;
+      background: linear-gradient(110deg, var(--cyan), #d7ffff);
+      box-shadow: 0 10px 35px rgba(100,233,255,.18);
+    }
+
+    .scroll-note {
+      margin-top: 70px;
+      color: #667092;
+      font-size: .7rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .section-head { margin-bottom: 28px; }
+    .section-head span {
+      color: var(--pink);
+      font-size: .72rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .section-head h2 {
+      margin-top: 8px;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      letter-spacing: -.05em;
+    }
+    .section-head p { color: var(--muted); margin-top: 10px; max-width: 680px; line-height: 1.7; }
+
+    .glass {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .terminal {
+      overflow: hidden;
+      margin-top: 30px;
+    }
+    .terminal-top {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.025);
+    }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #59617c; }
+    .terminal-title { margin-left: auto; color: #68718f; font-size: .7rem; }
+    .terminal-body {
+      padding: 25px;
+      font: 500 .88rem/1.9 "SFMono-Regular", Consolas, monospace;
+      color: #cbd3f4;
+      min-height: 240px;
+    }
+    .code-key { color: var(--pink); }
+    .code-fn { color: var(--cyan); }
+    .code-string { color: var(--green); }
+    .code-comment { color: #59617c; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .stat { padding: 22px; }
+    .stat strong { display: block; font-size: 2rem; letter-spacing: -.05em; }
+    .stat span { color: var(--muted); font-size: .78rem; }
+
+    .lab {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 16px;
+    }
+    .control-panel, .preview { padding: 24px; }
+    .control-panel h3, .preview h3 { font-size: 1rem; margin-bottom: 18px; }
+    .control {
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      margin-top: 10px;
+      background: rgba(255,255,255,.025);
+    }
+    .control label {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: .78rem;
+      margin-bottom: 10px;
+    }
+    input[type="range"] { width: 100%; accent-color: var(--pink); }
+    .preview {
+      min-height: 350px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .reactor {
+      width: min(280px, 70vw);
+      aspect-ratio: 1;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+    .reactor::before, .reactor::after {
+      content: "";
+      position: absolute;
+      inset: 9%;
+      border: 1px solid rgba(100,233,255,.35);
+      border-radius: 50%;
+      transform: rotateX(70deg);
+      box-shadow: 0 0 40px rgba(100,233,255,.08);
+    }
+    .reactor::after { transform: rotateY(70deg); border-color: rgba(255,101,195,.3); }
+    .core {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff, var(--cyan) 22%, var(--violet) 50%, transparent 72%);
+      filter: blur(.2px);
+      box-shadow: 0 0 70px var(--cyan);
+      transition: .2s;
+    }
+    .ring {
+      position: absolute;
+      inset: 20%;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 50%;
+      animation: orbit 5s linear infinite;
+    }
+    .ring:nth-child(2) { inset: 10%; animation-duration: 8s; animation-direction: reverse; }
+    .ring:nth-child(3) { inset: 28%; animation-duration: 3.5s; }
+    @keyframes orbit { to { transform: rotate(360deg) } }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .project {
+      min-height: 260px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: .3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .project:hover { transform: translateY(-7px); border-color: rgba(255,255,255,.18); }
+    .project::after {
+      content: "";
+      position: absolute;
+      width: 150px; height: 150px;
+      right: -70px; top: -70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,101,195,.2), transparent 70%);
+    }
+    .project-icon { font-size: 2rem; }
+    .project h3 { margin: 15px 0 8px; font-size: 1.15rem; }
+    .project p { color: var(--muted); line-height: 1.6; font-size: .84rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+    .tag {
+      font: 600 .66rem "SFMono-Regular", Consolas, monospace;
+      color: #b7c0e4;
+      border: 1px solid var(--line);
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.025);
+    }
+
+    .timeline { position: relative; padding-left: 25px; }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 4px; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(var(--cyan), var(--pink), transparent);
+    }
+    .event { position: relative; margin-bottom: 22px; padding: 20px; }
+    .event::before {
+      content: "";
+      position: absolute;
+      left: -27px; top: 25px;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 15px var(--cyan);
+    }
+    .event small { color: var(--pink); font: 700 .68rem monospace; }
+    .event h3 { margin: 6px 0; }
+    .event p { color: var(--muted); line-height: 1.6; font-size: .86rem; }
+
+    .contact {
+      text-align: center;
+      padding: 70px 20px;
+    }
+    .contact h2 { font-size: clamp(2.2rem, 6vw, 4.8rem); letter-spacing: -.06em; }
+    .contact p { max-width: 600px; margin: 15px auto 25px; color: var(--muted); line-height: 1.7; }
+
+    footer {
+      width: min(1100px, calc(100% - 32px));
+      margin: auto;
+      padding: 35px 0 55px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      color: #69718e;
+      font-size: .72rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(25px);
+      transition: .8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 800px) {
+      .nav-links { display: none; }
+      .lab, .projects { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .section { padding: 80px 0; }
+    }
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .stat { padding: 16px; }
+      .terminal-body { padding: 18px; font-size: .72rem; }
+      footer { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <nav class="nav">
+    <a href="#home" class="brand">
+      <span class="brand-orb"></span>
+      NEBULA.OS
+    </a>
+
+    <div class="nav-links">
+      <a href="#system">System</a>
+      <a href="#lab">Lab</a>
+      <a href="#projects">Modules</a>
+      <a href="#architecture">Architecture</a>
+    </div>
+
+    <button class="nav-action" id="themeButton">SYSTEM ONLINE</button>
+  </nav>
+
+  <main>
+    <section class="section hero" id="home">
+      <div>
+        <span class="eyebrow"><i class="pulse"></i> interactive web experiment</span>
+        <h1>NEBULA<br />OS</h1>
+        <p>
+          Um laboratório digital fictício onde interface, animação, dados e lógica
+          se encontram. Este projeto foi criado como uma peça de portfólio para
+          demonstrar front-end moderno sem depender de frameworks.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn primary" href="#lab">Entrar no laboratório →</a>
+          <a class="btn" href="#architecture">Ver arquitetura</a>
+        </div>
+
+        <div class="scroll-note">scroll to initialize</div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="system">
+      <div class="section-head">
+        <span>01 · system</span>
+        <h2>Uma interface que parece um produto.</h2>
+        <p>
+          Em vez de um portfólio tradicional, o projeto simula um sistema operacional
+          futurista. O objetivo é transformar conhecimento técnico em uma experiência
+          visual que também conta uma história.
+        </p>
+      </div>
+
+      <div class="glass terminal">
+        <div class="terminal-top">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="terminal-title">nebula-core / runtime.log</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="code-comment">// boot sequence</span></div>
+          <div><span class="code-key">const</span> system = <span class="code-string">"NEBULA.OS"</span>;</div>
+          <div><span class="code-key">const</span> modules = [<span class="code-string">"UI"</span>, <span class="code-string">"DATA"</span>, <span class="code-string">"MOTION"</span>, <span class="code-string">"LOGIC"</span>];</div>
+          <br />
+          <div><span class="code-fn">initialize</span>(system);</div>
+          <div><span class="code-fn">loadModules</span>(modules);</div>
+          <div><span class="code-string">✓ visual engine ready</span></div>
+          <div><span class="code-string">✓ interaction layer ready</span></div>
+          <div><span class="code-string">✓ responsive layout ready</span></div>
+          <div><span class="code-string">✓ zero external dependencies</span></div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="glass stat"><strong>01</strong><span>arquivo principal</span></div>
+        <div class="glass stat"><strong>0</strong><span>dependências externas</span></div>
+        <div class="glass stat"><strong>100%</strong><span>responsivo</span></div>
+        <div class="glass stat"><strong>∞</strong><span>possibilidades</span></div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="lab">
+      <div class="section-head">
+        <span>02 · laboratory</span>
+        <h2>Controle o núcleo.</h2>
+        <p>
+          Um mini experimento interativo. Alterar os parâmetros muda a energia
+          visual do reator em tempo real usando JavaScript e CSS.
+        </p>
+      </div>
+
+      <div class="lab">
+        <div class="glass control-panel">
+          <h3>Reactor parameters</h3>
+
+          <div class="control">
+            <label><span>Energy</span><output id="energyValue">72%</output></label>
+            <input id="energy" type="range" min="10" max="100" value="72" />
+          </div>
+
+          <div class="control">
+            <label><span>Rotation</span><output id="rotationValue">55%</output></label>
+            <input id="rotation" type="range" min="10" max="100" value="55" />
+          </div>
+
+          <div class="control">
+            <label><span>Pulse</span><output id="pulseValue">64%</output></label>
+            <input id="pulseRange" type="range" min="10" max="100" value="64" />
+          </div>
+
+          <button class="btn primary" id="randomize" style="width:100%;margin-top:14px;">
+            Generate anomaly
+          </button>
+        </div>
+
+        <div class="glass preview">
+          <div class="reactor" id="reactor">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="core" id="core"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="projects">
+      <div class="section-head">
+        <span>03 · modules</span>
+        <h2>Peças que podem virar projetos reais.</h2>
+        <p>
+          A estrutura foi pensada para crescer. Cada módulo pode ser separado
+          em um projeto próprio no GitHub.
+        </p>
+      </div>
+
+      <div class="projects">
+        <article class="glass project">
+          <div>
+            <div class="project-icon">◈</div>
+            <h3>Quantum UI</h3>
+            <p>Design system experimental com componentes, estados, microinterações e acessibilidade.</p>
+          </div>
+          <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">A11Y</span></div>
+        </article>
+
+        <article class="glass project">
+          <div>
+            <div class="project-icon">⌁</div>
+            <h3>Data Pulse</h3>
+            <p>Dashboard visual para transformar números em uma experiência de leitura rápida e elegante.</p>
+          </div>
+          <div class="tags"><span class="tag">JavaScript</span><span class="tag">Charts</span><span class="tag">UX</span></div>
+        </article>
+
+        <article class="glass project">
+          <div>
+            <div class="project-icon">✦</div>
+            <h3>Motion Engine</h3>
+            <p>Camada de animações com eventos, transições e feedback visual sem bibliotecas.</p>
+          </div>
+          <div class="tags"><span class="tag">CSS Motion</span><span class="tag">DOM</span><span class="tag">UX</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section reveal" id="architecture">
+      <div class="section-head">
+        <span>04 · architecture</span>
+        <h2>O que está por trás.</h2>
+        <p>
+          O projeto usa tecnologias nativas da web para provar que uma interface
+          sofisticada não precisa ser pesada.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <article class="glass event">
+          <small>LAYER 01 · STRUCTURE</small>
+          <h3>HTML semântico</h3>
+          <p>Seções, navegação, artigos, formulários e estrutura acessível organizam o conteúdo.</p>
+        </article>
+
+        <article class="glass event">
+          <small>LAYER 02 · VISUAL ENGINE</small>
+          <h3>CSS avançado</h3>
+          <p>Gradientes, blur, glassmorphism, animações, variáveis CSS, grid, flexbox e design responsivo.</p>
+        </article>
+
+        <article class="glass event">
+          <small>LAYER 03 · INTERACTION</small>
+          <h3>JavaScript vanilla</h3>
+          <p>Eventos, manipulação do DOM, inputs em tempo real, geração aleatória e IntersectionObserver.</p>
+        </article>
+
+        <article class="glass event">
+          <small>LAYER 04 · NEXT STEP</small>
+          <h3>Arquitetura evolutiva</h3>
+          <p>O mesmo conceito pode evoluir para TypeScript, Web Components, APIs, WebGL, Node.js e banco de dados.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="glass contact">
+        <span class="eyebrow">system ready</span>
+        <h2>Build things<br />people remember.</h2>
+        <p>
+          Um portfólio não precisa apenas mostrar o que você sabe fazer.
+          Ele pode fazer a pessoa sentir curiosidade para descobrir como foi feito.
+        </p>
+        <a class="btn primary" href="https://github.com/" target="_blank" rel="noopener">
+          Abrir GitHub ↗
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>NEBULA.OS · PORTFOLIO LAB</span>
+    <span>Built with HTML · CSS · JavaScript</span>
+  </footer>
+
+  <script>
+    // Cursor glow
+    const glow = document.getElementById("cursorGlow");
+    window.addEventListener("pointermove", (event) => {
+      glow.style.left = event.clientX + "px";
+      glow.style.top = event.clientY + "px";
+    });
+
+    // Reveal sections
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+    // Reactor controls
+    const energy = document.getElementById("energy");
+    const rotation = document.getElementById("rotation");
+    const pulseRange = document.getElementById("pulseRange");
+
+    const energyValue = document.getElementById("energyValue");
+    const rotationValue = document.getElementById("rotationValue");
+    const pulseValue = document.getElementById("pulseValue");
+
+    const core = document.getElementById("core");
+    const rings = document.querySelectorAll(".ring");
+
+    function updateReactor() {
+      const e = Number(energy.value);
+      const r = Number(rotation.value);
+      const p = Number(pulseRange.value);
+
+      energyValue.value = e + "%";
+      rotationValue.value = r + "%";
+      pulseValue.value = p + "%";
+
+      core.style.transform = `scale(${0.75 + e / 170})`;
+      core.style.boxShadow = `0 0 ${25 + e}px rgba(100,233,255,${0.25 + e / 160})`;
+
+      rings[0].style.animationDuration = `${Math.max(1.4, 9 - r / 14)}s`;
+      rings[1].style.animationDuration = `${Math.max(2, 13 - r / 12)}s`;
+      rings[2].style.animationDuration = `${Math.max(1, 6 - r / 20)}s`;
+
+      core.style.filter = `blur(${Math.max(0, 1.2 - p / 100)}px)`;
+    }
+
+    [energy, rotation, pulseRange].forEach(input => {
+      input.addEventListener("input", updateReactor);
+    });
+
+    document.getElementById("randomize").addEventListener("click", () => {
+      energy.value = Math.floor(Math.random() * 91) + 10;
+      rotation.value = Math.floor(Math.random() * 91) + 10;
+      pulseRange.value = Math.floor(Math.random() * 91) + 10;
+      updateReactor();
+
+      const button = document.getElementById("randomize");
+      button.textContent = "Anomaly generated ✓";
+      setTimeout(() => button.textContent = "Generate anomaly", 1200);
+    });
+
+    updateReactor();
+
+    // System button
+    const themeButton = document.getElementById("themeButton");
+    themeButton.addEventListener("click", () => {
+      document.body.animate(
+        [{ filter: "brightness(1)" }, { filter: "brightness(1.35)" }, { filter: "brightness(1)" }],
+        { duration: 500 }
+      );
+      themeButton.textContent = "SIGNAL PING ✓";
+      setTimeout(() => themeButton.textContent = "SYSTEM ONLINE", 1000);
+    });
+  </script>
+</body>
+</html>
